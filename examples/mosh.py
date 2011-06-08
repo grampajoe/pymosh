@@ -17,25 +17,22 @@ def mosh(filename):
     def process_frame(frame):
         """Process a frame, holding onto one P-frame at a time, which is used to
         replace any I-frames encountered."""
-        if buf[0] == None:
+        if buf[0] == None or not is_iframe(frame):
             buf[0] = frame
         else:
-            if is_iframe(frame):
-                frame = buf[0]
-            else:
-                buf[0] = frame
+            frame = buf[0]
         return frame
 
     # Modify the streams in place so the file can be rewritten.
-    for i in range(len(f.streams)):
-        stream = f.streams[i]
+    for stream in f:
         if stream.type == 'vids':
             # Each I-frame is replaced by the following P-frame. Going
             # backwards makes this much less awkward. The first frame is kept
             # intact.
-            f.streams[i] = map(process_frame, reversed(stream[1:])) + stream[:1]
+            newstream = map(process_frame, reversed(stream[1:])) + stream[:1]
             # Flip the frames back to the right order.
-            f.streams[i].reverse()
+            newstream.reverse()
+            stream.replace(newstream)
 
     # Call rebuild_riff to recombine the modified streams and replace the AVI
     # index.
