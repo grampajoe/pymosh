@@ -165,7 +165,7 @@ class RiffIndex(RiffIndexList):
         self.size = self.get_size()
         self.scan_file()
 
-    def write_data(self, fh):
+    def write(self, fh):
         if not isinstance(fh, file):
             fh = open(fh, 'wb')
         def print_chunks(chunks):

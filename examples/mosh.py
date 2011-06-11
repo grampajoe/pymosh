@@ -1,17 +1,17 @@
 # mosh.py: pymosh example
 #
 # This example uses pymosh to perform "standard" datamoshing: removing
-# every I-frame but the first to blend all the motion in the video.
+# every I-frame but the first to blend all the motion in an AVI video.
 #
 # Usage:
 #   python mosh.py input_filename > output_filename
 
-from pymosh.avi import AVIFile
+from pymosh import index
 from pymosh.mpeg4 import is_iframe
 import sys
 
 def mosh(filename):
-    f = AVIFile(filename)
+    f = index(filename)
 
     buf = [None] # So I can assign to the closed-over buffer
     def process_frame(frame):
@@ -34,12 +34,12 @@ def mosh(filename):
             newstream.reverse()
             stream.replace(newstream)
 
-    # Call rebuild_riff to recombine the modified streams and replace the AVI
-    # index.
-    f.rebuild_riff()
+    # Call rebuild to recombine the modified streams and perform any other
+    # maintenance the file format needs for clean output.
+    f.rebuild()
 
     # Finally, write the modified file to stdout.
-    f.write_data(sys.stdout)
+    f.write(sys.stdout)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:

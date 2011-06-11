@@ -72,7 +72,7 @@ class AVIFile():
             chunks.append(frame)
         return chunks
 
-    def rebuild_riff(self):
+    def rebuild(self):
         """Rebuild RIFF tree and index from streams."""
         movi = self.riff.find('LIST', 'movi')
         movi.chunks = self.combine_streams()
@@ -99,5 +99,5 @@ class AVIFile():
         new_index = riff.RiffDataChunk('idx1', data)
         self.riff.find('RIFF').replace(old_index, new_index)
 
-    def write_data(self, fh):
-        self.riff.write_data(fh)
+    def write(self, fh):
+        self.riff.write(fh)
