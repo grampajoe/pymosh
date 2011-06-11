@@ -12,7 +12,10 @@ class VideoIndex():
         self.index = avi.AVIFile(filename)
 
     def __getattr__(self, index):
-        return self.index.__getattr__(index)
+        return getattr(self.index, index)
+
+    def __iter__(self):
+        return iter(self.index)
 
 def index(filename):
     return VideoIndex(filename)
