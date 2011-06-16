@@ -41,7 +41,7 @@ class AVIFile():
         self.streams = []
         for l in stream_lists:
             strh = l.find('strh')
-            data = strh.data()
+            data = strh.data
             fccType, = struct.unpack('4s', data[:4])
             stream = Stream(len(self.streams), fccType)
             self.streams.append(stream)
@@ -50,7 +50,7 @@ class AVIFile():
         self.split_streams()
 
     def __iter__(self):
-        return self.streams.__iter__()
+        return iter(self.streams)
 
     def add_frame(self, chunk):
         stream_num = int(chunk.header[:2])
@@ -71,6 +71,14 @@ class AVIFile():
             frame = stream[frame_num]
             chunks.append(frame)
         return chunks
+
+    def _video(self):
+        return filter(lambda stream: stream.type == 'vids', self.streams)
+    video = property(_video)
+
+    def _audio(self):
+        return filter(lambda stream: stream.type == 'auds', self.streams)
+    audio = property(_audio)
 
     def rebuild(self):
         """Rebuild RIFF tree and index from streams."""

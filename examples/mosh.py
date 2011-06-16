@@ -23,16 +23,14 @@ def mosh(filename):
             frame = buf[0]
         return frame
 
-    # Modify the streams in place so the file can be rewritten.
-    for stream in f:
-        if stream.type == 'vids':
-            # Each I-frame is replaced by the following P-frame. Going
-            # backwards makes this much less awkward. The first frame is kept
-            # intact.
-            newstream = map(process_frame, reversed(stream[1:])) + stream[:1]
-            # Flip the frames back to the right order.
-            newstream.reverse()
-            stream.replace(newstream)
+    for stream in f.video:
+        # Each I-frame is replaced by the following P-frame. Going
+        # backwards makes this much less awkward. The first frame is kept
+        # intact.
+        newstream = map(process_frame, reversed(stream[1:])) + stream[:1]
+        # Flip the frames back to the right order.
+        newstream.reverse()
+        stream.replace(newstream)
 
     # Call rebuild to recombine the modified streams and perform any other
     # maintenance the file format needs for clean output.

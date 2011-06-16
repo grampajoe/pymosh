@@ -19,7 +19,7 @@ class RiffIndexChunk():
         pass
 
     def __str__(self):
-        data = self.data()
+        data = self.data
         return '{header}{length}{data}'.format(header=self.header,
                 length=struct.pack('<I', self.length), data=data)
 
@@ -41,7 +41,7 @@ class RiffIndexChunk():
     def __getitem__(self, index):
         return self[index:index+1]
 
-    def data(self):
+    def _data(self):
         """Read data from the file."""
         current_position = self.file.tell()
         self.file.seek(self.position)
@@ -50,6 +50,7 @@ class RiffIndexChunk():
         if self.length % 2:
             data += '\x00' # Padding byte
         return data
+    data = property(_data)
 
     def as_data(self):
         """Return a RiffDataChunk read from the file."""
