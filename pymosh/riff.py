@@ -7,7 +7,7 @@ list_headers = ('RIFF', 'LIST')
 class UnexpectedEOF(Exception):
     pass
 
-class RiffIndexChunk():
+class RiffIndexChunk(object):
     def __init__(self, fh, header, length, position):
         self.file = fh
         self.header = header
@@ -130,7 +130,7 @@ class RiffIndexList(RiffIndexChunk):
             if self[i] == child:
                 del self[i]
 
-class RiffDataChunk():
+class RiffDataChunk(object):
     """A RIFF chunk with data in memory instead of a file."""
 
     def __init__(self, header, data):
