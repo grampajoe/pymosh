@@ -3,7 +3,7 @@ import struct
 import sys
 from mpeg4 import is_iframe
 
-class Stream():
+class Stream(object):
     def __init__(self, num, stream_type):
         self.num = int(num)
         self.type = stream_type
@@ -30,7 +30,7 @@ class Stream():
     def replace(self, chunks):
         self.chunks = chunks
 
-class AVIFile():
+class AVIFile(object):
     """A wrapper for AVI files."""
     def __init__(self, filename):
         self.riff = riff.RiffIndex(filename)
@@ -41,7 +41,7 @@ class AVIFile():
         self.streams = []
         for l in stream_lists:
             strh = l.find('strh')
-            data = strh.data()
+            data = strh.data
             fccType, = struct.unpack('4s', data[:4])
             stream = Stream(len(self.streams), fccType)
             self.streams.append(stream)
@@ -50,7 +50,7 @@ class AVIFile():
         self.split_streams()
 
     def __iter__(self):
-        return self.streams.__iter__()
+        return iter(self.streams)
 
     def add_frame(self, chunk):
         stream_num = int(chunk.header[:2])
@@ -72,7 +72,15 @@ class AVIFile():
             chunks.append(frame)
         return chunks
 
-    def rebuild_riff(self):
+    def _video(self):
+        return filter(lambda stream: stream.type == 'vids', self.streams)
+    video = property(_video)
+
+    def _audio(self):
+        return filter(lambda stream: stream.type == 'auds', self.streams)
+    audio = property(_audio)
+
+    def rebuild(self):
         """Rebuild RIFF tree and index from streams."""
         movi = self.riff.find('LIST', 'movi')
         movi.chunks = self.combine_streams()
@@ -99,5 +107,5 @@ class AVIFile():
         new_index = riff.RiffDataChunk('idx1', data)
         self.riff.find('RIFF').replace(old_index, new_index)
 
-    def write_data(self, fh):
-        self.riff.write_data(fh)
+    def write(self, fh):
+        self.riff.write(fh)

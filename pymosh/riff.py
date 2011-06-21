@@ -7,7 +7,7 @@ list_headers = ('RIFF', 'LIST')
 class UnexpectedEOF(Exception):
     pass
 
-class RiffIndexChunk():
+class RiffIndexChunk(object):
     def __init__(self, fh, header, length, position):
         self.file = fh
         self.header = header
@@ -19,7 +19,7 @@ class RiffIndexChunk():
         pass
 
     def __str__(self):
-        data = self.data()
+        data = self.data
         return '{header}{length}{data}'.format(header=self.header,
                 length=struct.pack('<I', self.length), data=data)
 
@@ -41,7 +41,7 @@ class RiffIndexChunk():
     def __getitem__(self, index):
         return self[index:index+1]
 
-    def data(self):
+    def _data(self):
         """Read data from the file."""
         current_position = self.file.tell()
         self.file.seek(self.position)
@@ -50,6 +50,7 @@ class RiffIndexChunk():
         if self.length % 2:
             data += '\x00' # Padding byte
         return data
+    data = property(_data)
 
     def as_data(self):
         """Return a RiffDataChunk read from the file."""
@@ -129,7 +130,7 @@ class RiffIndexList(RiffIndexChunk):
             if self[i] == child:
                 del self[i]
 
-class RiffDataChunk():
+class RiffDataChunk(object):
     """A RIFF chunk with data in memory instead of a file."""
 
     def __init__(self, header, data):
@@ -165,7 +166,7 @@ class RiffIndex(RiffIndexList):
         self.size = self.get_size()
         self.scan_file()
 
-    def write_data(self, fh):
+    def write(self, fh):
         if not isinstance(fh, file):
             fh = open(fh, 'wb')
         def print_chunks(chunks):

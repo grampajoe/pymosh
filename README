@@ -1,55 +1,31 @@
 pymosh - Arbitrary manipulation of video files.
 
 https://github.com/grampajoe/pymosh
-
 Copyright 2011 Joe Friedl <joe@joefriedl.net>
 
 
 DESCRIPTION
 -----------------------------------------------------------------------
-My goal is to make video compression glitching, commonly called
-"datamoshing", easy and fast (for those familiar with Python). I also
-needed a video file parsing library that didn't need to suck the whole
-thing into memory at once.
+Pymosh is a set of tools for messing with video files. See the examples
+folder for usage examples.
 
-Video files are indexed keeping as little of the file in memory as
-possible, which allows for manipulation of extremely large files. After
-indexing, the video's frames and other data are available for any kind
-of manipulation you can come up with.
-
-See the examples folder for usage examples. For an introduction to
-traditional "datamoshing", see:
-	http://www.youtube.com/watch?v=tYytVzbPky8
-
-An example of a video made using an early version of this module:
+Video examples:
 	http://www.youtube.com/watch?v=-tV5EPoKqXE
+	http://www.youtube.com/watch?v=Khv_k9GDsKI
 
-Keep in mind that this was all hacked together in my free time, more
-for my own entertainment than anything else. It's buggy and inelegant.
-Any help or suggestions would be pretty great. The best way to help
-is opening issues or pull requests on github:
+This was hacked together for entertainment. If you want to help, you
+can do so at:
 	https://github.com/grampajoe/pymosh
 
-It should also be noted that I'm not an expert in video encoding, signal
-processing, Python, or really anything that could be related to this
-project.
 
-
-FORMATS
+FORMATS AND CODECS
 -----------------------------------------------------------------------
-AVI is currently the only supported format; and the "datamoshing"
-process, as far as I know, works best with MPEG-4 video.
+Formats: AVI, Matroska/WebM (in development)
+Codecs: MPEG4
 
 
 THE FUTURE
 -----------------------------------------------------------------------
-I want to add support for additional formats and possibly generalized
-frame/stream manipulation. Currently, EBML (Matroska, WebM) support is
-in development, and I'm really anxious to see what VP8 datamoshing
-would look like.
-
-For the distant future, especially after this has been cleaned up,
-generalized, and supports a good amount of formats, it'd be fun to have
-a GUI editor tailored to the kinds of operations this library was built
-for. No more avidemux for eight hours for non-technical datamoshers!
-The fad will probably be over by then, if it isn't already.
+- Generalized, format-and-codec-agnostic tools.
+- Additional formats and codecs (priority: WebM/VP8).
+- GUI editor based on these tools.
