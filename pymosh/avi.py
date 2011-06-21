@@ -3,7 +3,7 @@ import struct
 import sys
 from mpeg4 import is_iframe
 
-class Stream():
+class Stream(object):
     def __init__(self, num, stream_type):
         self.num = int(num)
         self.type = stream_type
@@ -30,7 +30,7 @@ class Stream():
     def replace(self, chunks):
         self.chunks = chunks
 
-class AVIFile():
+class AVIFile(object):
     """A wrapper for AVI files."""
     def __init__(self, filename):
         self.riff = riff.RiffIndex(filename)
