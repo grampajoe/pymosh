@@ -2,7 +2,7 @@ import sys
 
 __all__ = ['index', 'avi', 'mpeg4', 'riff']
 
-class VideoIndex():
+class VideoIndex(object):
     def __init__(self, filename):
         self.filename = filename
         self.index = None
