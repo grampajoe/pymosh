@@ -1,4 +1,4 @@
-from ebml.types import *
+from pymosh.ebml.types import *
 
 # Generic EBML Elements
 

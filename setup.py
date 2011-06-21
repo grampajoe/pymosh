@@ -8,5 +8,5 @@ setup(name='pymosh',
         author='Joe Friedl',
         author_email='joe@joefriedl.net',
         url='http://github.com/grampajoe/pymosh/',
-        packages=['pymosh'],
+        packages=['pymosh', 'pymosh.ebml', 'pymosh.ebml.elements', 'pymosh.matroska'],
         )

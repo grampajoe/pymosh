@@ -1,5 +1,5 @@
-from ebml.elements import Element, BaseElement
-from ebml.util import *
+from pymosh.ebml.elements import Element, BaseElement
+from pymosh.ebml.util import *
 import os
 
 # Element Types

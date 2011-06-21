@@ -1,6 +1,6 @@
-from ebml.elements import Element
-from ebml.elements.generic import *
-from ebml.util import *
+from pymosh.ebml.elements import Element
+from pymosh.ebml.elements.generic import *
+from pymosh.ebml.util import *
 import struct
 
 # Container class
