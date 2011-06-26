@@ -7,7 +7,31 @@ class Stream(object):
     def __init__(self, num, stream_type):
         self.num = int(num)
         self.type = stream_type
+        self.headers = {}
         self.chunks = []
+
+    @staticmethod
+    def from_header_list(num, header_list):
+        stream = Stream(num, '')
+
+        strh = header_list.find('strh')
+        unpacked = struct.unpack('4s4sIIIIIIIIIIII', strh.data)
+        stream.headers = {
+            'type':                  unpacked[0],
+            'handler':               unpacked[1],
+            'flags':                 unpacked[2],
+            'priority':              unpacked[3],
+            'initial_frames':        unpacked[4],
+            'scale':                 unpacked[5],
+            'rate':                  unpacked[6],
+            'start':                 unpacked[7],
+            'suggested_buffer_size': unpacked[8],
+            'quality':               unpacked[9],
+            'sample_size':           unpacked[10],
+        }
+        stream.type = stream.headers['type']
+
+        return stream
 
     def add_frame(self, chunk):
         self.chunks.append(chunk)
@@ -34,17 +58,27 @@ class AVIFile(object):
     """A wrapper for AVI files."""
     def __init__(self, filename):
         self.riff = riff.RiffIndex(filename=filename)
-        
+
         header = self.riff.find('LIST', 'hdrl')
+        avih = header.find('avih')
+        unpacked = struct.unpack('IIIIIIIIII4I', avih.data) 
+        self.headers = {
+                'micro_sec_per_frame':   unpacked[0],
+                'max_bytes_per_sec':     unpacked[1],
+                'flags':                 unpacked[3], # 2 is reserved/unused
+                'total_frames':          unpacked[4],
+                'inital_frames':         unpacked[5],
+                'streams':               unpacked[6],
+                'suggested_buffer_size': unpacked[7],
+                'width':                 unpacked[8],
+                'height':                unpacked[9], # Rest are reserved 
+        }
+
         # Get stream info
         stream_lists = header.find_all('LIST', 'strl')
         self.streams = []
         for l in stream_lists:
-            strh = l.find('strh')
-            data = strh.data
-            fccType, = struct.unpack('4s', data[:4])
-            stream = Stream(len(self.streams), fccType)
-            self.streams.append(stream)
+            self.streams.append(Stream.from_header_list(len(self.streams), l))
 
         self.frame_order = []
         self.split_streams()
@@ -52,7 +86,7 @@ class AVIFile(object):
     def __iter__(self):
         return iter(self.streams)
 
-    def add_frame(self, chunk):
+    def add_frame_to_stream(self, chunk):
         stream_num = int(chunk.header[:2])
         if stream_num < len(self.streams):
             self.frame_order.append((stream_num, len(self.streams[stream_num])))
@@ -61,7 +95,7 @@ class AVIFile(object):
     def split_streams(self):
         movi = self.riff.find('LIST', 'movi')
         for chunk in movi:
-            self.add_frame(chunk)
+            self.add_frame_to_stream(chunk)
 
     def combine_streams(self):
         chunks = []
