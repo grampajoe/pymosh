@@ -33,7 +33,7 @@ class Stream(object):
 class AVIFile(object):
     """A wrapper for AVI files."""
     def __init__(self, filename):
-        self.riff = riff.RiffIndex(filename)
+        self.riff = riff.RiffIndex(filename=filename)
         
         header = self.riff.find('LIST', 'hdrl')
         # Get stream info
