@@ -9,13 +9,13 @@
 # Usage:
 #   python moshmotion.py interval input-file
 
-from pymosh import index
+from pymosh import Index
 from pymosh.mpeg4 import is_iframe
 import sys
 import os
 
 def mosh(interval, filename):
-    f = index(filename) #loads in the index of frames in the given avi file
+    f = Index(filename) #loads in the index of frames in the given avi file
 
     buf = [None] # So I can assign to the closed-over buffer
     def process_frame(frame):

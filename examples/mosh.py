@@ -6,12 +6,12 @@
 # Usage:
 #   python mosh.py input_filename > output_filename
 
-from pymosh import index
+from pymosh import Index
 from pymosh.mpeg4 import is_iframe
 import sys
 
 def mosh(filename):
-    f = index(filename)
+    f = Index(filename)
 
     buf = [None] # So I can assign to the closed-over buffer
     def process_frame(frame):
