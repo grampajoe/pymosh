@@ -1,8 +1,8 @@
 import sys
 
-__all__ = ['index', 'avi', 'mpeg4', 'riff']
+__all__ = ['Index', 'avi', 'mpeg4', 'riff']
 
-class VideoIndex(object):
+class Index(object):
     def __init__(self, filename):
         self.filename = filename
         self.index = None
@@ -16,6 +16,3 @@ class VideoIndex(object):
 
     def __iter__(self):
         return iter(self.index)
-
-def index(filename):
-    return VideoIndex(filename)

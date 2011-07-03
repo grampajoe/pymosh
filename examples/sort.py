@@ -6,10 +6,10 @@
 #   python sort.py input_filename > output_filename
 
 import sys
-from pymosh import index
+from pymosh import Index
 
 def avi_sort(filename):
-    f = index(filename)
+    f = Index(filename)
 
     for stream in f.video:
         sorted_stream = sorted(stream, key=len, reverse=True)
