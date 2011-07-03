@@ -1,6 +1,6 @@
 import sys
 
-__all__ = ['Index', 'avi', 'mpeg4', 'riff']
+__all__ = ['Index']
 
 class Index(object):
     def __init__(self, filename):
