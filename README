@@ -5,27 +5,24 @@ Copyright 2011 Joe Friedl <joe@joefriedl.net>
 
 
 DESCRIPTION
------------------------------------------------------------------------
-Pymosh is a set of tools for messing with video files. See the examples
-folder for usage examples.
+	Pymosh is a set of tools for messing with video files. See the examples
+	folder for usage examples.
 
-Video examples:
-	http://www.youtube.com/watch?v=-tV5EPoKqXE
-	http://www.youtube.com/watch?v=Khv_k9GDsKI
+	Video examples:
+		http://www.youtube.com/watch?v=-tV5EPoKqXE
+		http://www.youtube.com/watch?v=Khv_k9GDsKI
 
-This was hacked together for entertainment. If you want to help, you
-can do so at:
-	https://github.com/grampajoe/pymosh
+	This was hacked together for entertainment. If you want to help, you
+	can do so at:
+		https://github.com/grampajoe/pymosh
 
 
 FORMATS AND CODECS
------------------------------------------------------------------------
-Formats: AVI, Matroska/WebM (in development)
-Codecs: MPEG4
+	Formats: AVI, Matroska/WebM (in development)
+	Codecs: MPEG4
 
 
 THE FUTURE
------------------------------------------------------------------------
-- Generalized, format-and-codec-agnostic tools.
-- Additional formats and codecs (priority: WebM/VP8).
-- GUI editor based on these tools.
+	- Generalized, format-and-codec-agnostic tools.
+	- Additional formats and codecs (priority: WebM/VP8).
+	- GUI editor based on these tools.
