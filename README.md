@@ -5,6 +5,12 @@ Arbitrary manipulation of video files.
 Pymosh is a set of tools for messing with video files. See the examples
 folder for usage examples.
 
+## Installing
+
+```
+pip install pymosh
+```
+
 ## Supported Formats and Codecs
 
 * AVI
