@@ -1,6 +1,6 @@
 from . import riff
 import struct
-from .mpeg4 import is_iframe
+from pymosh.codec.mpeg4 import is_iframe
 
 
 class Stream(object):

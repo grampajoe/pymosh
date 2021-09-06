@@ -7,7 +7,7 @@
 #   python mosh.py input_filename > output_filename
 
 from pymosh import Index
-from pymosh.mpeg4 import is_iframe
+from pymosh.codec.mpeg4 import is_iframe
 import sys
 
 

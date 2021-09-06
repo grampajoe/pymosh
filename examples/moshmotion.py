@@ -10,7 +10,7 @@
 #   python moshmotion.py interval input-file
 
 from pymosh import Index
-from pymosh.mpeg4 import is_iframe
+from pymosh.codec.mpeg4 import is_iframe
 import sys
 import os
 
