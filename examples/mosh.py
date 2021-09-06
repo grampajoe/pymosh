@@ -12,7 +12,7 @@ import sys
 
 
 def mosh(filename):
-    f = Index(filename)
+    f = Index.from_file(filename)
 
     buf = [None]  # So I can assign to the closed-over buffer
 

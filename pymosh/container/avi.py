@@ -3,53 +3,33 @@ import struct
 from pymosh.codec.mpeg4 import is_iframe
 
 
-class Stream(object):
-    def __init__(self, num, stream_type):
-        self.num = int(num)
-        self.type = stream_type
-        self.chunks = []
-
-    def add_frame(self, chunk):
-        self.chunks.append(chunk)
-
-    def __getitem__(self, index):
-        return self.chunks.__getitem__(index)
-
-    def __iter__(self):
-        return self.chunks.__iter__()
-
-    def __len__(self):
-        return len(self.chunks)
-
-    def append(self, *args):
-        return self.chunks.append(*args)
-
-    def extend(self, *args):
-        return self.chunks.extend(*args)
-
-    def replace(self, chunks):
-        self.chunks = chunks
-
-
 class AVIFile(object):
     """A wrapper for AVI files."""
 
-    def __init__(self, filename):
-        self.riff = riff.RiffIndex(filename=filename)
+    def __init__(self):
+        pass
 
-        header = self.riff.find(b'LIST', b'hdrl')
+    @staticmethod
+    def from_file(filename: str):
+        instance = AVIFile()
+
+        instance.riff = riff.RiffIndex.from_file(filename=filename)
+
+        header = instance.riff.find(b'LIST', b'hdrl')
         # Get stream info
         stream_lists = header.find_all(b'LIST', b'strl')
-        self.streams = []
+        instance.streams = []
         for l in stream_lists:
             strh = l.find(b'strh')
             data = strh.data
             fccType, = struct.unpack(b'4s', data[:4])
-            stream = Stream(len(self.streams), fccType)
-            self.streams.append(stream)
+            stream = Stream(len(instance.streams), fccType)
+            instance.streams.append(stream)
 
-        self.frame_order = []
-        self.split_streams()
+        instance.frame_order = []
+        instance.split_streams()
+
+        return instance
 
     def __iter__(self):
         return iter(self.streams)
@@ -112,3 +92,31 @@ class AVIFile(object):
 
     def write(self, fh):
         self.riff.write(fh)
+
+
+class Stream(object):
+    def __init__(self, num, stream_type):
+        self.num = int(num)
+        self.type = stream_type
+        self.chunks = []
+
+    def add_frame(self, chunk):
+        self.chunks.append(chunk)
+
+    def __getitem__(self, index):
+        return self.chunks.__getitem__(index)
+
+    def __iter__(self):
+        return self.chunks.__iter__()
+
+    def __len__(self):
+        return len(self.chunks)
+
+    def append(self, *args):
+        return self.chunks.append(*args)
+
+    def extend(self, *args):
+        return self.chunks.extend(*args)
+
+    def replace(self, chunks):
+        self.chunks = chunks

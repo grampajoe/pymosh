@@ -17,10 +17,6 @@ class RiffIndexChunk(object):
         self.length = int(length)
         self.position = position
 
-    @staticmethod
-    def from_file(fh, position):
-        pass
-
     def __str__(self):
         data = self.data
         return '{header}{length}{data}'.format(header=self.header,
@@ -182,14 +178,18 @@ class RiffDataChunk(object):
 
 
 class RiffIndex(RiffIndexList):
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.chunks = []
 
-        filename = kwargs.get('filename', None)
-        if filename is not None:
-            self.file = open(filename, 'rb')
-            self.size = self.get_size()
-            self.scan_file()
+    @staticmethod
+    def from_file(filename: str):
+        instance = RiffIndex()
+
+        instance.file = open(filename, 'rb')
+        instance.size = instance.get_size()
+        instance.scan_file()
+
+        return instance
 
     def write(self, fh):
         if not isinstance(fh, IOBase):
@@ -200,6 +200,7 @@ class RiffIndex(RiffIndexList):
                 fh.write(str(chunk))
                 if chunk.header in (b'RIFF', b'LIST'):
                     print_chunks(chunk.chunks)
+
         print_chunks(self.chunks)
         fh.close()
         self.close()

@@ -16,7 +16,8 @@ import os
 
 
 def mosh(interval, filename):
-    f = Index(filename)  # loads in the index of frames in the given avi file
+    # loads in the index of frames in the given avi file
+    f = Index.from_file(filename)
 
     buf = [None]  # So I can assign to the closed-over buffer
 
