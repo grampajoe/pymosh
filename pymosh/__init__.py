@@ -8,7 +8,7 @@ class Index(object):
         self.filename = filename
         self.index = None
 
-        # Just do this for now
+        # Assume AVI for now
         self.index = avi.AVIFile(filename)
 
     def __getattr__(self, index):
