@@ -1,11 +1,14 @@
 import struct
 import os
-import sys
+from io import IOBase
 
-list_headers = ('RIFF', 'LIST')
+
+list_headers = (b'RIFF', b'LIST')
+
 
 class UnexpectedEOF(Exception):
     pass
+
 
 class RiffIndexChunk(object):
     def __init__(self, fh, header, length, position):
@@ -21,12 +24,17 @@ class RiffIndexChunk(object):
     def __str__(self):
         data = self.data
         return '{header}{length}{data}'.format(header=self.header,
-                length=struct.pack('<I', self.length), data=data)
+                                               length=struct.pack(b'<I', self.length), data=data)
 
     def __len__(self):
         return self.length
 
     def __getslice__(self, start, end):
+        if start is None:
+            start = 0
+        if end is None:
+            end = self.length
+
         current = self.file.tell()
         self.file.seek(self.position+start)
         if start < end and start <= self.length:
@@ -39,6 +47,8 @@ class RiffIndexChunk(object):
             return ''
 
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            return self.__getslice__(index.start, index.stop)
         return self[index:index+1]
 
     def _data(self):
@@ -48,12 +58,13 @@ class RiffIndexChunk(object):
         data = self.file.read(self.length)
         self.file.seek(current_position)
         if self.length % 2:
-            data += '\x00' # Padding byte
+            data += b'\x00'  # Padding byte
         return data
     data = property(_data)
 
     def as_data(self):
         """Return a RiffDataChunk read from the file."""
+
 
 class RiffIndexList(RiffIndexChunk):
     def __init__(self, header, list_type, *args, **kwargs):
@@ -83,14 +94,14 @@ class RiffIndexList(RiffIndexChunk):
         length = 0
         for chunk in self.chunks:
             chunk_len = len(chunk)
-            length += chunk_len + 8 # Header and length bytes
-            length += chunk_len % 2 # Pad byte
+            length += chunk_len + 8  # Header and length bytes
+            length += chunk_len % 2  # Pad byte
         return length
 
     def __str__(self):
         length = self.chunk_length() + len(self.type)
         return '{header}{length}{list_type}'.format(header=self.header,
-                length=struct.pack('<I', length), list_type=self.type)
+                                                    length=struct.pack(b'<I', length), list_type=self.type)
 
     class NotFound(Exception):
         """Indicates a chunk or list was not found by the find method."""
@@ -100,7 +111,7 @@ class RiffIndexList(RiffIndexChunk):
         """Find the first chunk with specified header and optional list type."""
         for chunk in self:
             if chunk.header == header and (list_type is None or (header in
-                    list_headers and chunk.type == list_type)):
+                                                                 list_headers and chunk.type == list_type)):
                 return chunk
             elif chunk.header in list_headers:
                 try:
@@ -112,14 +123,14 @@ class RiffIndexList(RiffIndexChunk):
             raise self.NotFound('Chunk \'{0}\' not found.'.format(header))
         else:
             raise self.NotFound('List \'{0} {1}\' not found.'.format(header,
-                list_type))
+                                                                     list_type))
 
     def find_all(self, header, list_type=None):
         """Find all direct children with header and optional list type."""
         found = []
         for chunk in self:
             if chunk.header == header and (not list_type or (header in
-                list_headers and chunk.type == list_type)):
+                                                             list_headers and chunk.type == list_type)):
                 found.append(chunk)
         return found
 
@@ -135,6 +146,7 @@ class RiffIndexList(RiffIndexChunk):
             if self[i] == child:
                 del self[i]
 
+
 class RiffDataChunk(object):
     """A RIFF chunk with data in memory instead of a file."""
 
@@ -146,14 +158,18 @@ class RiffDataChunk(object):
     @staticmethod
     def from_data(data):
         """Create a chunk from data including header and length bytes."""
-        header, length = struct.unpack('4s<I', data[:8])
+        header, _ = struct.unpack(b'4s<I', data[:8])
         data = data[8:]
         return RiffDataChunk(header, data)
+
+    def bytes(self):
+        """Returns a byte array representation of the chunk."""
+        return self.header + struct.pack('<I', self.length) + self.data
 
     def __str__(self):
         pad = '\x00' if self.length % 2 else ''
         return '{header}{length}{data}'.format(header=self.header,
-                length=struct.pack('<I', self.length), data=self.data, pad=pad)
+                                               length=struct.pack(b'<I', self.length), data=self.data, pad=pad)
 
     def __len__(self):
         return self.length
@@ -163,6 +179,7 @@ class RiffDataChunk(object):
 
     def __getitem__(self, index):
         return self.data[index]
+
 
 class RiffIndex(RiffIndexList):
     def __init__(self, *args, **kwargs):
@@ -175,12 +192,13 @@ class RiffIndex(RiffIndexList):
             self.scan_file()
 
     def write(self, fh):
-        if not isinstance(fh, file):
+        if not isinstance(fh, IOBase):
             fh = open(fh, 'wb')
+
         def print_chunks(chunks):
             for chunk in chunks:
                 fh.write(str(chunk))
-                if chunk.header in ('RIFF', 'LIST'):
+                if chunk.header in (b'RIFF', b'LIST'):
                     print_chunks(chunk.chunks)
         print_chunks(self.chunks)
         fh.close()
@@ -198,15 +216,16 @@ class RiffIndex(RiffIndexList):
         if len(buf) == length:
             return buf
         else:
-            raise UnexpectedEOF('End of file reached after {0} bytes.'.format(len(buf)))
+            raise UnexpectedEOF(
+                'End of file reached after {0} bytes.'.format(len(buf)))
 
     def scan_file(self):
         header = self.readlen(4)
-        if header == 'RIFF':
-            length, list_type = struct.unpack('<I4s', self.readlen(8))
+        if header == b'RIFF':
+            length, list_type = struct.unpack(b'<I4s', self.readlen(8))
             chunks = self.scan_chunks(length-4)
             self.chunks.append(RiffIndexList(header, list_type, file=self.file,
-                position=0, chunks=chunks))
+                                             position=0, chunks=chunks))
         else:
             raise Exception('Not a RIFF file!')
 
@@ -217,8 +236,8 @@ class RiffIndex(RiffIndexList):
             header = self.readlen(4)
             total_length += 4
 
-            length, = struct.unpack('<I', self.file.read(4))
-            total_length += length + 4 # add 4 for itself
+            length, = struct.unpack(b'<I', self.file.read(4))
+            total_length += length + 4  # add 4 for itself
 
             position = self.file.tell()
 
@@ -230,14 +249,15 @@ class RiffIndex(RiffIndexList):
                     self.file.seek(1, os.SEEK_CUR)
                     total_length += 1
                 chunks.append(RiffIndexList(header, list_type, file=self.file,
-                    position=position, chunks=data))
+                                            position=position, chunks=data))
             else:
                 self.file.seek(length, os.SEEK_CUR)
                 if length % 2:
                     # Padding byte
                     self.file.seek(1, os.SEEK_CUR)
                     total_length += 1
-                chunks.append(RiffIndexChunk(self.file, header, length, position))
+                chunks.append(RiffIndexChunk(
+                    self.file, header, length, position))
         return chunks
 
     def close(self):

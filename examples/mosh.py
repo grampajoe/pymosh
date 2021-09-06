@@ -10,10 +10,12 @@ from pymosh import Index
 from pymosh.mpeg4 import is_iframe
 import sys
 
+
 def mosh(filename):
     f = Index(filename)
 
-    buf = [None] # So I can assign to the closed-over buffer
+    buf = [None]  # So I can assign to the closed-over buffer
+
     def process_frame(frame):
         """Process a frame, holding onto one P-frame at a time, which is used to
         replace any I-frames encountered."""
@@ -27,7 +29,7 @@ def mosh(filename):
         # Each I-frame is replaced by the following P-frame. Going
         # backwards makes this much less awkward. The first frame is kept
         # intact.
-        newstream = map(process_frame, reversed(stream[1:])) + stream[:1]
+        newstream = list(map(process_frame, reversed(stream[1:]))) + stream[:1]
         # Flip the frames back to the right order.
         newstream.reverse()
         stream.replace(newstream)
@@ -39,9 +41,10 @@ def mosh(filename):
     # Finally, write the modified file to stdout.
     f.write(sys.stdout)
 
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print "Usage: mosh.py filename"
+        print("Usage: mosh.py filename")
         sys.exit(1)
 
     mosh(sys.argv[1])

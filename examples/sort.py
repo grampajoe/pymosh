@@ -8,6 +8,7 @@
 import sys
 from pymosh import Index
 
+
 def avi_sort(filename):
     f = Index(filename)
 
@@ -18,8 +19,9 @@ def avi_sort(filename):
     f.rebuild()
     f.write(sys.stdout)
 
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print 'Usage: {0} filename'.format(sys.argv[0])
+        print('Usage: {0} filename'.format(sys.argv[0]))
 
     avi_sort(sys.argv[1])

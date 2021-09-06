@@ -1,6 +1,7 @@
-import sys
+from . import avi
 
 __all__ = ['Index']
+
 
 class Index(object):
     def __init__(self, filename):
@@ -8,7 +9,6 @@ class Index(object):
         self.index = None
 
         # Just do this for now
-        import avi
         self.index = avi.AVIFile(filename)
 
     def __getattr__(self, index):
