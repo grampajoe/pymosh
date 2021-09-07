@@ -10,7 +10,7 @@ from pymosh import Index
 
 
 def avi_sort(filename):
-    f = Index(filename)
+    f = Index.from_file(filename)
 
     for stream in f.video:
         sorted_stream = sorted(stream, key=len, reverse=True)

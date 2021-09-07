@@ -11,15 +11,20 @@ folder for usage examples.
 pip install pymosh
 ```
 
-## Supported Formats and Codecs
+## Supported Container Formats and Codecs
 
-* AVI
-* MPEG4
+### Container Formats
+
+- AVI
+
+### Codecs
+
+- MPEG4
 
 ## Video examples:
 
-* [Example 1](http://www.youtube.com/watch?v=-tV5EPoKqXE)
-* [Example 2](http://www.youtube.com/watch?v=Khv_k9GDsKI)
+- [Example 1](http://www.youtube.com/watch?v=-tV5EPoKqXE)
+- [Example 2](http://www.youtube.com/watch?v=Khv_k9GDsKI)
 
 ## Contributing
 

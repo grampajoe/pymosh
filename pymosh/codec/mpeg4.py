@@ -1,4 +1,4 @@
-IFRAME_HEADER = '\x00\x00\x01\xb0'
+IFRAME_HEADER = b'\x00\x00\x01\xb0'
 
 
 def is_iframe(frame):

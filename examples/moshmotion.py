@@ -10,13 +10,14 @@
 #   python moshmotion.py interval input-file
 
 from pymosh import Index
-from pymosh.mpeg4 import is_iframe
+from pymosh.codec.mpeg4 import is_iframe
 import sys
 import os
 
 
 def mosh(interval, filename):
-    f = Index(filename)  # loads in the index of frames in the given avi file
+    # loads in the index of frames in the given avi file
+    f = Index.from_file(filename)
 
     buf = [None]  # So I can assign to the closed-over buffer
 

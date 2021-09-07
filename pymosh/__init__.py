@@ -1,15 +1,24 @@
-from . import avi
+from .container import avi
 
 __all__ = ['Index']
 
 
 class Index(object):
-    def __init__(self, filename):
-        self.filename = filename
-        self.index = None
+    """Index is an index of video frame data."""
 
-        # Just do this for now
-        self.index = avi.AVIFile(filename)
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def from_file(filename: str):
+        instance = Index()
+        instance.filename = filename
+        instance.index = None
+
+        # Assume AVI for now
+        instance.index = avi.AVIFile.from_file(filename)
+
+        return instance
 
     def __getattr__(self, index):
         return getattr(self.index, index)
