@@ -4,15 +4,15 @@
 # every I-frame but the first to blend all the motion in an AVI video.
 #
 # Usage:
-#   python mosh.py input_filename > output_filename
+#   python mosh.py input_filename output_filename
 
 from pymosh import Index
 from pymosh.codec.mpeg4 import is_iframe
 import sys
 
 
-def mosh(filename):
-    f = Index.from_file(filename)
+def mosh(infile, outfile):
+    f = Index.from_file(infile)
 
     buf = [None]  # So I can assign to the closed-over buffer
 
@@ -39,12 +39,13 @@ def mosh(filename):
     f.rebuild()
 
     # Finally, write the modified file to stdout.
-    f.write(sys.stdout)
+    with open(outfile, 'wb') as out:
+        f.write(out)
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: mosh.py filename")
+        print("Usage: mosh.py <infile> <outfile>")
         sys.exit(1)
 
-    mosh(sys.argv[1])
+    mosh(sys.argv[1], sys.argv[2])

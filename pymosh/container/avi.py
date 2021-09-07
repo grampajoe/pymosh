@@ -1,13 +1,17 @@
-from . import riff
 import struct
+
 from pymosh.codec.mpeg4 import is_iframe
+
+from . import riff
 
 
 class AVIFile(object):
     """A wrapper for AVI files."""
 
     def __init__(self):
-        pass
+        self.riff = riff.RiffIndex()
+        self.streams = []
+        self.frame_order = []
 
     @staticmethod
     def from_file(filename: str):
@@ -18,7 +22,6 @@ class AVIFile(object):
         header = instance.riff.find(b'LIST', b'hdrl')
         # Get stream info
         stream_lists = header.find_all(b'LIST', b'strl')
-        instance.streams = []
         for l in stream_lists:
             strh = l.find(b'strh')
             data = strh.data
@@ -26,7 +29,6 @@ class AVIFile(object):
             stream = Stream(len(instance.streams), fccType)
             instance.streams.append(stream)
 
-        instance.frame_order = []
         instance.split_streams()
 
         return instance
